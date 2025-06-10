@@ -73,4 +73,4 @@ COPY --from=build /app/supabase ./supabase
 RUN npm ci --only=production
 
 # Start the application
-CMD npm start
+CMD ["sh", "-c", "next start -H 0.0.0.0 -p ${PORT:-3000}"]
