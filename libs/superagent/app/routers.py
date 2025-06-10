@@ -1,4 +1,5 @@
 from fastapi import APIRouter
+from fastapi.responses import JSONResponse
 
 from app.api import (
     agents,
@@ -14,6 +15,14 @@ from app.api.workflow_configs import workflow_configs
 
 router = APIRouter()
 api_prefix = "/api/v1"
+
+# Health check endpoint for Render
+@router.get("/health")
+async def health_check():
+    return JSONResponse(
+        status_code=200,
+        content={"status": "healthy", "service": "superagent-api"}
+    )
 
 router.include_router(agents.router, tags=["Agent"], prefix=api_prefix)
 router.include_router(llms.router, tags=["LLM"], prefix=api_prefix)

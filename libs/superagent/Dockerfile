@@ -39,4 +39,8 @@ RUN pip install grpcio-status
 # Enable prisma migrations
 RUN prisma generate
 
-CMD exec gunicorn --bind :$PORT --workers 2 --timeout 0 --worker-class uvicorn.workers.UvicornWorker --threads 8 app.main:app
+# Copy and make startup script executable
+COPY start.sh ./
+RUN chmod +x start.sh
+
+CMD ["./start.sh"]
