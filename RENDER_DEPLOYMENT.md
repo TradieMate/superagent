@@ -33,9 +33,21 @@ The following port binding issues have been resolved:
    DATABASE_URL=your_database_url
    DATABASE_MIGRATION_URL=your_migration_url
    JWT_SECRET=your_jwt_secret
+   OPENROUTER_API_KEY=your_openrouter_key
+   DATABASE_SHADOW_URL=your_shadow_db_url
    MEMORY=motorhead
+   REDIS_MEMORY_URL=your_redis_url
+   REDIS_MEMORY_WINDOW=10
    MEMORY_API_URL=https://memory.superagent.sh
-   VECTORSTORE=pinecone
+   VECTORSTORE=weaviate
+   WEAVIATE_API_KEY=your_weaviate_key
+   WEAVIATE_INDEX=superagent
+   WEAVIATE_URL=your_weaviate_url
+   SUPABASE_DB_URL=your_supabase_url
+   SUPABASE_TABLE_NAME=your_table_name
+   E2B_API_KEY=your_e2b_key
+   REPLICATE_API_TOKEN=your_replicate_token
+   TAVILY_API_KEY=your_tavily_key
    SUPERAGENT_API_URL=https://your-api-service.onrender.com
    ```
    
@@ -62,17 +74,27 @@ The following port binding issues have been resolved:
 
 ## Required Environment Variables
 
-### Backend (Mandatory)
+### Backend Variables
 - `OPENAI_API_KEY`: Your OpenAI API key
 - `DATABASE_URL`: PostgreSQL database connection string
 - `DATABASE_MIGRATION_URL`: Database URL for migrations
 - `JWT_SECRET`: Secret key for JWT tokens
-
-### Backend (Optional but Recommended)
-- `MEMORY`: Memory provider (default: motorhead)
-- `VECTORSTORE`: Vector database provider (pinecone, qdrant, weaviate)
+- `OPENROUTER_API_KEY`: OpenRouter API key for open source LLMs
+- `DATABASE_SHADOW_URL`: Shadow database URL
+- `MEMORY`: Memory provider (motorhead)
 - `REDIS_MEMORY_URL`: Redis connection for memory storage
-- `PINECONE_API_KEY`, `PINECONE_ENVIRONMENT`, `PINECONE_INDEX`: For Pinecone vector store
+- `REDIS_MEMORY_WINDOW`: Redis memory window (10)
+- `MEMORY_API_URL`: Memory API URL
+- `VECTORSTORE`: Vector database provider (weaviate)
+- `WEAVIATE_API_KEY`: Weaviate API key
+- `WEAVIATE_INDEX`: Weaviate index name
+- `WEAVIATE_URL`: Weaviate URL
+- `SUPABASE_DB_URL`: Supabase database URL
+- `SUPABASE_TABLE_NAME`: Supabase table name
+- `E2B_API_KEY`: E2B code execution API key
+- `REPLICATE_API_TOKEN`: Replicate API token
+- `TAVILY_API_KEY`: Tavily search API key
+- `SUPERAGENT_API_URL`: Your backend service URL
 
 ### Frontend
 - `NEXT_PUBLIC_SUPERAGENT_API_URL`: URL of your deployed backend API

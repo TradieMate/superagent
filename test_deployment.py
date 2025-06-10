@@ -44,32 +44,35 @@ def test_frontend_dockerfile():
         print("❌ Frontend Dockerfile missing correct port binding")
         return False
 
-def test_docker_configuration():
-    """Test if Docker configuration is properly set up for Render"""
-    backend_dockerfile = Path("libs/superagent/Dockerfile")
-    frontend_dockerfile = Path("libs/ui/Dockerfile")
+def test_environment_variables():
+    """Test if environment variables are properly configured"""
+    env_example = Path("libs/superagent/.env.example")
     
-    if not backend_dockerfile.exists() or not frontend_dockerfile.exists():
-        print("❌ Required Dockerfiles not found")
+    if not env_example.exists():
+        print("❌ .env.example not found")
         return False
     
-    backend_content = backend_dockerfile.read_text()
-    frontend_content = frontend_dockerfile.read_text()
+    content = env_example.read_text()
     
-    # Check for proper Docker configuration
-    checks = [
-        ("0.0.0.0:$PORT" in backend_content or "./start.sh" in backend_content, "Backend port binding"),
-        ("-H 0.0.0.0" in frontend_content and "${PORT:-3000}" in frontend_content, "Frontend port binding"),
-        ("FROM python:" in backend_content, "Backend Python base image"),
-        ("FROM node:" in frontend_content, "Frontend Node base image"),
+    # Check for required variables
+    required_vars = [
+        "OPENAI_API_KEY",
+        "DATABASE_URL", 
+        "DATABASE_MIGRATION_URL",
+        "JWT_SECRET",
+        "VECTORSTORE=weaviate",
+        "WEAVIATE_API_KEY",
+        "WEAVIATE_INDEX",
+        "WEAVIATE_URL",
+        "SUPERAGENT_API_URL"
     ]
     
     all_passed = True
-    for check_result, description in checks:
-        if check_result:
-            print(f"✅ {description} configured correctly")
+    for var in required_vars:
+        if var in content:
+            print(f"✅ {var} found in .env.example")
         else:
-            print(f"❌ {description} not configured correctly")
+            print(f"❌ {var} missing in .env.example")
             all_passed = False
     
     return all_passed
@@ -111,7 +114,7 @@ def main():
     tests = [
         ("Backend Dockerfile", test_backend_dockerfile),
         ("Frontend Dockerfile", test_frontend_dockerfile),
-        ("Docker Configuration", test_docker_configuration),
+        ("Environment Variables", test_environment_variables),
         ("Startup Script", test_startup_script),
         ("Health Endpoint", test_health_endpoint),
     ]
