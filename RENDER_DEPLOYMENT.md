@@ -1,6 +1,6 @@
 # Superagent Render Deployment Guide
 
-This guide provides step-by-step instructions to deploy Superagent on Render with proper port binding configuration.
+This guide provides step-by-step instructions to deploy Superagent on Render with proper port binding configuration using Docker.
 
 ## Issues Fixed
 
@@ -11,21 +11,9 @@ The following port binding issues have been resolved:
 3. **Health Check**: Added `/health` endpoint for Render's health checks
 4. **Startup Script**: Created robust startup script with proper error handling
 
-## Deployment Options
+## Docker-Based Deployment
 
-### Option 1: Using render.yaml (Recommended)
-
-1. **Fork the repository** to your GitHub account
-2. **Connect to Render**: Go to [Render Dashboard](https://dashboard.render.com) and connect your GitHub account
-3. **Deploy from render.yaml**: 
-   - Click "New" → "Blueprint"
-   - Select your forked repository
-   - Render will automatically detect the `render.yaml` file
-4. **Set Environment Variables**: Configure the required environment variables in the Render dashboard
-
-### Option 2: Manual Deployment
-
-#### Backend API Deployment
+### Backend API Deployment
 
 1. **Create Web Service**:
    - Go to [Render Dashboard](https://dashboard.render.com/create?type=web)
@@ -41,7 +29,6 @@ The following port binding issues have been resolved:
 
 3. **Environment Variables**:
    ```
-   PORT=10000
    OPENAI_API_KEY=your_openai_key
    DATABASE_URL=your_database_url
    DATABASE_MIGRATION_URL=your_migration_url
@@ -51,8 +38,10 @@ The following port binding issues have been resolved:
    VECTORSTORE=pinecone
    SUPERAGENT_API_URL=https://your-api-service.onrender.com
    ```
+   
+   > **Note**: Render automatically sets the `PORT` environment variable to `10000`. The Dockerfile is configured to use this automatically.
 
-#### Frontend UI Deployment
+### Frontend UI Deployment
 
 1. **Create Web Service**:
    - Create another web service for the frontend
@@ -63,12 +52,13 @@ The following port binding issues have been resolved:
 
 2. **Environment Variables**:
    ```
-   PORT=10000
    NODE_ENV=production
    NEXT_PUBLIC_SUPERAGENT_API_URL=https://your-api-service.onrender.com
    NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
    NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_key
    ```
+   
+   > **Note**: Render automatically sets the `PORT` environment variable. The Dockerfile is configured to use this automatically.
 
 ## Required Environment Variables
 
@@ -89,6 +79,8 @@ The following port binding issues have been resolved:
 - `NEXT_PUBLIC_SUPABASE_URL`: Supabase project URL
 - `NEXT_PUBLIC_SUPABASE_ANON_KEY`: Supabase anonymous key
 
+> **Important**: Do not manually set the `PORT` environment variable. Render automatically provides this and the Dockerfiles are configured to use it.
+
 ## Health Checks
 
 The backend now includes a health check endpoint at `/health` that returns:
@@ -102,8 +94,9 @@ The backend now includes a health check endpoint at `/health` that returns:
 ## Troubleshooting
 
 ### Port Binding Issues
-- Ensure `PORT` environment variable is set to `10000` (Render's default)
+- Render automatically sets the `PORT` environment variable (usually `10000`)
 - The application now properly binds to `0.0.0.0:$PORT`
+- Do not manually override the `PORT` variable
 
 ### Worker Termination (Signal 9)
 - Increase memory allocation in Render plan

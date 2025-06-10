@@ -44,30 +44,32 @@ def test_frontend_dockerfile():
         print("❌ Frontend Dockerfile missing correct port binding")
         return False
 
-def test_render_config():
-    """Test if render.yaml exists and has correct structure"""
-    render_config = Path("render.yaml")
-    if not render_config.exists():
-        print("❌ render.yaml not found")
+def test_docker_configuration():
+    """Test if Docker configuration is properly set up for Render"""
+    backend_dockerfile = Path("libs/superagent/Dockerfile")
+    frontend_dockerfile = Path("libs/ui/Dockerfile")
+    
+    if not backend_dockerfile.exists() or not frontend_dockerfile.exists():
+        print("❌ Required Dockerfiles not found")
         return False
     
-    content = render_config.read_text()
+    backend_content = backend_dockerfile.read_text()
+    frontend_content = frontend_dockerfile.read_text()
     
-    # Check for required configurations
+    # Check for proper Docker configuration
     checks = [
-        ("services:", "Services section"),
-        ("type: web", "Web service type"),
-        ("env: docker", "Docker environment"),
-        ("healthCheckPath: /health", "Health check path"),
-        ("PORT", "PORT environment variable")
+        ("0.0.0.0:$PORT" in backend_content or "./start.sh" in backend_content, "Backend port binding"),
+        ("-H 0.0.0.0" in frontend_content and "${PORT:-3000}" in frontend_content, "Frontend port binding"),
+        ("FROM python:" in backend_content, "Backend Python base image"),
+        ("FROM node:" in frontend_content, "Frontend Node base image"),
     ]
     
     all_passed = True
-    for check, description in checks:
-        if check in content:
-            print(f"✅ {description} found in render.yaml")
+    for check_result, description in checks:
+        if check_result:
+            print(f"✅ {description} configured correctly")
         else:
-            print(f"❌ {description} missing in render.yaml")
+            print(f"❌ {description} not configured correctly")
             all_passed = False
     
     return all_passed
@@ -109,7 +111,7 @@ def main():
     tests = [
         ("Backend Dockerfile", test_backend_dockerfile),
         ("Frontend Dockerfile", test_frontend_dockerfile),
-        ("Render Configuration", test_render_config),
+        ("Docker Configuration", test_docker_configuration),
         ("Startup Script", test_startup_script),
         ("Health Endpoint", test_health_endpoint),
     ]
@@ -137,7 +139,7 @@ def main():
         print("\n🎉 All tests passed! Your Superagent deployment should work on Render.")
         print("\n📝 Next steps:")
         print("1. Commit and push these changes to your repository")
-        print("2. Deploy using render.yaml or manual configuration")
+        print("2. Deploy using Docker configuration in Render dashboard")
         print("3. Set up required environment variables in Render dashboard")
         return True
     else:
